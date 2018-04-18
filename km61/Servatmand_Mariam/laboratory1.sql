@@ -120,8 +120,10 @@ GRANT INSERT ANY TABLE TO Servatmand;
 ---------------------------------------------------------------------------*/
 
 --Код відповідь:
-SELECT VENDORS.vend_name, ORDERITEMS.item_price FROM VENDORS, PRODUCTS, ORDERITEMS WHERE VENDORS.vend_id = PRODUCTS.vend_id and PRODUCTS.prod_id = ORDERITEMS.prod_id and ORDERITEMS.item_price IN (SELECT MIN(ORDERITEMS.item_price) FROM ORDERITEMS );
-
+PROJECT VENDORS TIMES PRODUCS TIMES ORDERTIMES
+{VENDORS.vend_name, ORDERITEMS.item_price} WHERE VENDORS.vend_id=PRODUCTS.vend_id 
+and PRODUCTS.prod_id=ORDERIEMS.prod_id and ORDERITEMS.item_pricec in (
+PROJECT OREDERIEMS {MIN(ORDERITEMS.item_price)})
 
 
 
@@ -143,8 +145,7 @@ SELECT VENDORS.vend_name, ORDERITEMS.item_price FROM VENDORS, PRODUCTS, ORDERITE
 ---------------------------------------------------------------------------*/
 
 --Код відповідь:
-RENAME( PROJECT UPPER(CUSTOMERS WHERE CUST_COUNTRY = 'USA' AND CUST_ZIP IS NOT NULL) {CUST_NAME} ) CUST_NAME -> client_name
-
+SELECT DISTINCT UPPER(cust_name) AS client_name FROM CUSTOMERS  WHERE cust_country='usa' and cust_zip is NOT NULL
 
 
 
@@ -165,5 +166,10 @@ c.
 4 бали
 ---------------------------------------------------------------------------*/
 --Код відповідь:
-PROJECT LOWER(( PROJECT (VENDORS) {VEND_NAME, VEND_ID}) MINUS PROJECT ((VENDORS TIMES ORDERITEMS) TIMES (ORDERS TIMES PRODUCTS) ){VEND_NAME, VENDORS.VEND_ID} WHERE (ORDERITEMS.ORDER_NUM = ORDERS.ORDER_NUM AND ORDERITEMS.PROD_ID = PRODUCTS.PROD_ID AND PRODUCTS.VEND_ID = VENDORS.VEND_ID)) (RENAME {VEND_NAME} vendor_name);
-
+SELECT LOWER(VEND_NAME) as vendor_name 
+FROM PRODUCTS,VENDORS 
+WHERE
+   VENDORS.VEND_ID = PRODUCTS.VEND_ID
+MINUS
+SELECT LOWER(VEND_NAME) vendor_name FROM PRODUCTS,ORDERITEMS,VENDORS WHERE 
+    VENDORS.VEND_ID = PRODUCTS.VEND_ID AND PRODUCTS.PROD_ID = ORDERITEMS.PROD_ID;
