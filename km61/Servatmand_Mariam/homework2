@@ -1,0 +1,133 @@
+import cx_Oracle
+import plotly.offline as py
+import plotly.graph_objs as go
+ 
+ 
+connection = cx_Oracle.connect("furrr", "furrr", "Test")
+ 
+cursor = connection.cursor()
+ 
+cursor.execute("""
+select
+citizen.citizen_name,
+count(h_id)
+from
+citizen join
+citizen_house
+on citizen.person_id = citizen_house.person_id
+group by citizen.citizen_name """)
+ 
+citizens = []
+houses_sum = []
+ 
+ 
+for row in cursor:
+    print("Citizen name: ",row[1]," and his houses sum: ",row[1])
+    citizens += [row[0]]
+    houses_sum += [row[1]]
+ 
+ 
+data = [go.Bar(
+            x=citizens,
+            y=houses_sum
+    )]
+ 
+layout = go.Layout(
+    title='Citizens and Houses sum',
+    xaxis=dict(
+        title='Citizens',
+        titlefont=dict(
+            family='Courier New, monospace',
+            size=18,
+            color='#7f7f7f'
+        )
+    ),
+    yaxis=dict(
+        title='Orders sum',
+        rangemode='nonnegative',
+        autorange=True,
+        titlefont=dict(
+            family='Courier New, monospace',
+            size=18,
+            color='#7f7f7f'
+        )
+    )
+)
+fig = go.Figure(data=data, layout=layout)
+ 
+customers_orders_sum = py.plot(fig)
+
+
+import cx_Oracle
+import plotly.offline as py
+import plotly.graph_objs as go
+ 
+ 
+connection = cx_Oracle.connect("furrr", "furrr", "Test")
+ 
+cursor = connection.cursor()
+ 
+cursor.execute("""
+SELECT
+citizen.person_id,
+citizen.citizen_name,
+count(citizen_house.h_id) as house_sum
+FROM
+citizen JOIN citizen_house
+ON citizen.person_id = citizen_house.person_id
+GROUP BY citizen.person_id, citizen.citizen_name
+""");
+ 
+citizens = []
+houses_sum = []
+ 
+ 
+for row in cursor:
+    print("Citizen name ",row[1]+" id: ("+row[1],") and his houses sum: ",row[2])
+    citizens += [row[1]]
+    houses_sum += [row[2]]
+ 
+ 
+pie = go.Pie(labels=citizens, values=houses_sum)
+py.plot([pie])
+
+import cx_Oracle
+import plotly.offline as py
+import plotly.graph_objs as go
+ 
+ 
+connection = cx_Oracle.connect("furrr", "furrr", "Test")
+ 
+cursor = connection.cursor()
+ 
+ 
+ 
+cursor.execute("""
+SELECT
+    car.release_year,
+    count(car.car_id)
+ FROM
+    car
+    group by car.release_year
+    ORDER BY car.release_year
+""")
+release_year = []
+car_name = []
+ 
+ 
+for row in cursor:
+    print("Date ",row[0]," car ",row[1])
+    release_year += [row[0]]
+    car_name += [row[1]]
+ 
+ 
+car_release_year = go.Scatter(
+    x=release_year,
+    y=car_name,
+    mode='lines+markers'
+)
+data = [car_release_year]
+py.plot(data)
+
+
+
