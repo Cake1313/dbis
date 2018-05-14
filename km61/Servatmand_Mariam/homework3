@@ -1,0 +1,83 @@
+import csv
+ 
+import cx_Oracle
+ 
+connection = cx_Oracle.connect("furrr", "furrr", "Test")
+ 
+cursor_citizens = connection.cursor()
+ 
+cursor_citizens.execute("""
+SELECT
+    TRIM(person_id) as person_id,
+    TRIM(citizen_name) as citizen_name
+FROM
+    citizen""")
+ 
+ 
+ 
+for person_id, citizen_name in cursor_citizens:
+ 
+    with open("citizen_"+person_id+".csv", "w", newline="") as file:
+        writer = csv.writer(file)
+ 
+        writer.writerow(["id", person_id])
+        writer.writerow(["Name", citizen_name])
+        
+ 
+        cursor_citizenhouse = connection.cursor()
+ 
+        query = """
+                    SELECT
+                        h_id
+ 
+                    FROM
+                        citizen NATURAL JOIN citizen_house
+                    WHERE TRIM(person_id) = :id"""
+ 
+        cursor_citizenhouse.execute(query, id = person_id)
+        writer.writerow([])
+        writer.writerow(["house id"])
+        for citizenhouse_row in cursor_citizenhouse:
+            writer.writerow(citizenhouse_row)
+ 
+cursor_citizens.close()
+
+import csv
+ 
+import cx_Oracle
+ 
+connection = cx_Oracle.connect("furrr", "furrr", "Test")
+ 
+filename = "citizen_2.csv"
+ 
+with open(filename, newline='') as file:
+    reader = csv.reader(file)
+ 
+    id = next(reader)[1]
+    name = next(reader)[1]
+ 
+    insert_query = "insert into citizen(person_id, citizen_name) values (:person_id, :citizen_name)"
+    cursor_student = connection.cursor()
+    cursor_student.execute(insert_query, person_id = id, citizen_name = name)
+    cursor_student.close()
+ 
+    connection.commit()
+ 
+    next(reader, None) 
+    next(reader, None) 
+ 
+    insert_query = "INSERT INTO citizen_house (h_id) VALUES (:h_id))"
+    cursor_citizenhouse = connection.cursor()
+ 
+    cursor_citizenhouse.prepare (insert_query)
+ 
+    rows = []
+    for row in reader:
+        rows.append(row+[id])
+ 
+    cursor_citizenhouse.executemany(None, rows)
+ 
+    cursor_citizenhouse.close()
+    connection.commit() #save changes in db
+ 
+
