@@ -1,1 +1,57 @@
 
+Марьям, [07.06.18 13:43]
+CREATE table Citizen(
+citizen_name VARCHAR(30)
+  phone_number VARCHAR(13)
+  person_id NUMBER(12)
+  age NUMBER(3).
+);
+ALTER TABLE Citizen
+   add CONSTRAINT citizen_pk primary key (person_id, citizen_name)
+INSERT INTO Citizen(citizen_name, phone_number, age) VALUES(Mark Novemb,1311, 19);
+INSERT INTO Citizen(citizen_name, phone_number, age) VALUES(Alex March,1710, 19);
+INSERT INTO Citizen(citizen_name, phone_number, age) VALUES(Matthew Bellamy,0706,35);
+
+CREATE table house (
+   street VARCHAR(15)
+  floor_number NUMBER(3)
+   resident_number NUMBER(4)
+   building_year NUMBER(4)
+);
+ALTER TABLE House
+    add CONSTRAINT house_pk primary key (street)
+INSERT INTO House(street, floor_number, building year) VALUES(Blue, 4,1999);
+INSERT INTO House(street, floor_number, building year) VALUES(White, 6,1994);
+INSERT INTO House(street, floor_number, building year) VALUES(Yellow, 8,1996);
+
+CREATE table car(
+   car_id VARCHAR(20)
+   car_model VARCHAR(15)
+   car_type VARCHAR(15)
+   release_year NUMBER(4).
+);
+ALTER TABLE Car
+    add CONSTRAINT car_pk primary key (car_id)
+INSERT INTO Car(car_model, car_type, release_year) VALUES(bmw, first, 1990)
+INSERT INTO Car(car_model, car_type, release_year) VALUES(ford, first, 1996)
+INSERT INTO Car(car_model, car_type, release_year) VALUES(toshiba, third, 1993)
+
+create table Citizen_house_car(
+   person_id NUMBER(12)
+   citizen_name VARCHAR(30)
+   street VARCHAR(15)
+   car_id VARCHAR(20)
+);
+
+ALTER TABLE Citizen_house_car
+    add CONSTRAINT Citizen_house_car_pk primary key (person_id, citizen_name, street)
+ALTER TABLE Citizen_house_car
+add CONSTRAINT car_fk   FOREIGN KEY(person_id) REFERENCES car (car_id)
+ALTER TABLE Citizen_house_car
+add CONSTRAINT  person_fk  FOREIGN KEY(citizen_name) REFERENCES citizen(person_id)
+ALTER TABLE Citizen_house_car
+add CONSTRAINT street_fk   FOREIGN KEY(street)  REFERENCES house(street)
+
+INSERT INTO Citizen_house_car (citizen_name,street) VALUES(Mark, blue)
+INSERT INTO Citizen_house_car (citizen_name,street) VALUES(Alex, yellow)
+INSERT INTO Citizen_house_car (citizen_name,street) VALUES(Matthew, white)
